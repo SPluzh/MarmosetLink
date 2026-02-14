@@ -1,0 +1,54 @@
+global proc installMarmosetShelf() {
+    global string $gShelfTopLevel;
+    
+    // Get the currently active shelf tab
+    string $currentShelf = `tabLayout -query -selectTab $gShelfTopLevel`;
+    
+    if ($currentShelf == "") {
+        error "Could not determine the current shelf.";
+        return;
+    }
+
+    // --- Button 1: Export HP ---
+    shelfButton
+        -parent $currentShelf
+        -label "HP"
+        -annotation "Export HP & Bake"
+        -image "pythonFamily.png" 
+        -imageOverlayLabel "HP"
+        -style "iconOnly"
+        -command "import importlib; import maya_mset_integration.maya_mset_export_hp as hp; importlib.reload(hp); hp.main()"
+        -sourceType "python"
+        -menuItem "Settings" "python(\"import importlib; import maya_mset_integration.maya_mset_settings_gui as gui; importlib.reload(gui); gui.main()\")"
+    ;
+
+    // --- Button 2: Export LP ---
+    shelfButton
+        -parent $currentShelf
+        -label "LP"
+        -annotation "Export LP (Triangulated) & Bake"
+        -image "pythonFamily.png"
+        -imageOverlayLabel "LP"
+        -style "iconOnly"
+        -command "import importlib; import maya_mset_integration.maya_mset_export_lp as lp; importlib.reload(lp); lp.main()"
+        -sourceType "python"
+        -menuItem "Settings" "python(\"import importlib; import maya_mset_integration.maya_mset_settings_gui as gui; importlib.reload(gui); gui.main()\")"
+    ;
+
+    // --- Button 3: Bake Only ---
+    shelfButton
+        -parent $currentShelf
+        -label "Bake"
+        -annotation "Re-Bake Only"
+        -image "pythonFamily.png"
+        -imageOverlayLabel "BAKE"
+        -style "iconOnly"
+        -command "import importlib; import maya_mset_integration.maya_mset_bake as bake; importlib.reload(bake); bake.main()"
+        -sourceType "python"
+        -menuItem "Settings" "python(\"import importlib; import maya_mset_integration.maya_mset_settings_gui as gui; importlib.reload(gui); gui.main()\")"
+    ;
+    
+    print("Marmoset buttons added to shelf: " + $currentShelf + "\n");
+}
+
+installMarmosetShelf();

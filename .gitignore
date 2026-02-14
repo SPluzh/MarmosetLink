@@ -1,0 +1,48 @@
+# Agents & Tools
+.gemini/
+.serena/
+.cursorrules
+.windsurfrules
+gemini.md
+todo.md
+implementation_plan.md
+walkthrough.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Build & Distribution
+build/
+dist/
+*.spec
+_build_/
+
+# Application Data & Logs
+data/
+*.log
+settings.ini
+
+# Binaries
+ffmpeg.exe
+ffprobe.exe
+
+# Archives
+*.zip
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+.gitignore/
+.gemini/
