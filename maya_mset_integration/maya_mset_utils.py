@@ -50,16 +50,28 @@ def load_config():
     return {}
 
 def save_config(data):
-    """Save configuration to config.json in the user's home directory."""
+    """Save configuration to config.json, preferring script directory."""
     try:
-        # Always save to user home to avoid permission issues in install dirs
-        config_path = os.path.join(os.path.expanduser("~"), "config.json")
+        # 1. Try to save to the script's directory
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        local_config = os.path.join(current_dir, "config.json")
         
-        with open(config_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
+        try:
+            with open(local_config, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+            print("Maya Utils: Config saved to {}".format(local_config))
+            return True
+        except (IOError, OSError):
+             # 2. Fallback to user home
+            print("Maya Utils: Could not save to script dir, falling back to user home.")
+            config_path = os.path.join(os.path.expanduser("~"), "config.json")
             
-        print("Maya Utils: Config saved to {}".format(config_path))
-        return True
+            with open(config_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+                
+            print("Maya Utils: Config saved to {}".format(config_path))
+            return True
+
     except Exception as e:
         cmds.error("Maya Utils: Could not save config.json: {}".format(e))
         return False
