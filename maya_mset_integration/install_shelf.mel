@@ -21,6 +21,8 @@ global proc installMarmosetShelf() {
         -command "import importlib; import maya_mset_integration.maya_mset_export_hp as hp; importlib.reload(hp); hp.main()"
         -sourceType "python"
         -menuItem "Settings" "python(\"import importlib; import maya_mset_integration.maya_mset_settings_gui as gui; importlib.reload(gui); gui.main()\")"
+        -menuItem "Open in Explorer" "python(\"import importlib; import maya_mset_integration.maya_mset_open_explorer as exp; importlib.reload(exp); exp.main('hp')\")"
+        -menuItem "Export Only" "python(\"import importlib; import maya_mset_integration.maya_mset_export_hp as hp; importlib.reload(hp); hp.main_export_only()\")"
     ;
 
     // --- Button 2: Export LP ---
@@ -34,6 +36,8 @@ global proc installMarmosetShelf() {
         -command "import importlib; import maya_mset_integration.maya_mset_export_lp as lp; importlib.reload(lp); lp.main()"
         -sourceType "python"
         -menuItem "Settings" "python(\"import importlib; import maya_mset_integration.maya_mset_settings_gui as gui; importlib.reload(gui); gui.main()\")"
+        -menuItem "Open in Explorer" "python(\"import importlib; import maya_mset_integration.maya_mset_open_explorer as exp; importlib.reload(exp); exp.main('lp')\")"
+        -menuItem "Export Only" "python(\"import importlib; import maya_mset_integration.maya_mset_export_lp as lp; importlib.reload(lp); lp.main_export_only()\")"
     ;
 
     // --- Button 3: Bake Only ---
@@ -47,6 +51,18 @@ global proc installMarmosetShelf() {
         -command "import importlib; import maya_mset_integration.maya_mset_bake as bake; importlib.reload(bake); bake.main()"
         -sourceType "python"
         -menuItem "Settings" "python(\"import importlib; import maya_mset_integration.maya_mset_settings_gui as gui; importlib.reload(gui); gui.main()\")"
+    ;
+
+    // --- Button 4: Reload Textures ---
+    shelfButton
+        -parent $shelfName
+        -label "Reload"
+        -annotation "Reload Viewport Textures"
+        -image "refresh.png"
+        -imageOverlayLabel "RELOAD"
+        -style "iconOnly"
+        -command "import importlib; import maya_mset_integration.maya_mset_utils as utils; importlib.reload(utils); utils.reload_textures()"
+        -sourceType "python"
     ;
     
     // Set active tab to the new shelf

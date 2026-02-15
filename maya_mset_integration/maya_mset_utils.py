@@ -141,7 +141,12 @@ def find_and_focus_marmoset():
                 buf = ctypes.create_unicode_buffer(length + 1)
                 user32.GetWindowTextW(hwnd, buf, length + 1)
                 title = buf.value.lower()
-                if title.startswith("marmoset toolbag"):
+                
+                # Load configured window title
+                config = load_config()
+                target_title = config.get("mset_window_title", "marmoset toolbag").lower()
+                
+                if title.startswith(target_title):
                     found_hwnd = hwnd
                     return False  # Stop enumerating
         return True
@@ -333,6 +338,7 @@ def simple_fbx_export(config_key, default_filename):
                     raise Exception("Export file is empty: {}".format(export_path))
                     
                 print("Maya Utils: Export successful: {}".format(export_path))
+                cmds.inViewMessage(amg='<hl>Export Successful</hl>: {}'.format(os.path.basename(export_path)), pos='topCenter', fade=True)
                 return True
             except Exception as e:
                 cmds.error("Maya Utils: Export failed: {}".format(e))
@@ -442,20 +448,21 @@ def _on_bake_complete(result, selection_guard):
                     # that fire after this function exits
                     _schedule_undo_cleanup()
                 else:
-                     cmds.confirmDialog(
-                         title="Marmoset Timeout",
-                         message="Marmoset Toolbag did not respond within 30 seconds.\n\nPlease ensure that 'mset_external_listener.py' is running inside Marmoset Toolbag.",
-                         button=["OK"],
-                         icon="warning"
-                     )
-                     
+                    # Specific error from Marmoset (e.g. No Baker Selected)
+                    cmds.confirmDialog(
+                        title="Marmoset Error",
+                        message="Marmoset reported an error:\n\n{}".format(message),
+                        button=["OK"],
+                        icon="critical"
+                    )
             else:
-                 cmds.confirmDialog(
-                     title="Marmoset Timeout",
-                     message="Marmoset Toolbag did not respond within 30 seconds.\n\nPlease ensure that 'mset_external_listener.py' is running inside Marmoset Toolbag.",
-                     button=["OK"],
-                     icon="warning"
-                 )
+                # Actual timeout (result is None)
+                cmds.confirmDialog(
+                    title="Marmoset Timeout",
+                    message="Marmoset Toolbag did not respond within 30 seconds.\n\nPlease ensure that 'mset_external_listener.py' is running inside Marmoset Toolbag.",
+                    button=["OK"],
+                    icon="warning"
+                )
                  
         except Exception as e:
             print("Maya Utils: Error in completion handler: {}".format(e))
@@ -463,3 +470,11 @@ def _on_bake_complete(result, selection_guard):
             # Step 4: Restore selection
             if selection_guard:
                 selection_guard.__exit__(None, None, None)
+
+def reload_textures():
+    """
+    Reloads all textures in the Maya VP2.0 (ogs reload) and shows a notification.
+    """
+    cmds.ogs(reloadTextures=True)
+    cmds.inViewMessage(amg='<hl>Textures Reloaded</hl>', pos='topCenter', fade=True)
+    print("Maya Utils: Textures reloaded.")

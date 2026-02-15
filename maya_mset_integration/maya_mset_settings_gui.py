@@ -37,6 +37,13 @@ class MsetSettingsWindow(object):
         self.lp_path_field = cmds.textField()
         cmds.button(label="...", command=lambda x: self.browse_file(self.lp_path_field))
 
+        # --- General Settings ---
+        cmds.frameLayout(label="General Settings", collapsable=False, parent=main_layout, marginWidth=5, marginHeight=5)
+        general_layout = cmds.columnLayout(adjustableColumn=True, rowSpacing=5)
+        
+        cmds.text(label="Marmoset Window Title:", align="left", parent=general_layout)
+        self.mset_title_field = cmds.textField(parent=general_layout)
+
         # --- Settings Section ---
         cmds.frameLayout(label="LP Export Options", collapsable=False, parent=main_layout, marginWidth=5, marginHeight=5)
         options_layout = cmds.columnLayout(adjustableColumn=True, rowSpacing=5)
@@ -74,6 +81,10 @@ class MsetSettingsWindow(object):
         cmds.textField(self.hp_path_field, edit=True, text=hp_path)
         cmds.textField(self.lp_path_field, edit=True, text=lp_path)
         
+        # General
+        mset_title = config.get("mset_window_title", "Marmoset Toolbag")
+        cmds.textField(self.mset_title_field, edit=True, text=mset_title)
+        
         # Booleans (Default to True if not present, to match script logic)
         cmds.checkBox(self.unlock_normals_cb, edit=True, value=config.get("unlock_normals", True))
         cmds.checkBox(self.freeze_normals_cb, edit=True, value=config.get("freeze_normals", True))
@@ -83,6 +94,7 @@ class MsetSettingsWindow(object):
         data = {
             "hp_path": cmds.textField(self.hp_path_field, query=True, text=True),
             "lp_path": cmds.textField(self.lp_path_field, query=True, text=True),
+            "mset_window_title": cmds.textField(self.mset_title_field, query=True, text=True),
             "unlock_normals": cmds.checkBox(self.unlock_normals_cb, query=True, value=True),
             "freeze_normals": cmds.checkBox(self.freeze_normals_cb, query=True, value=True),
             "triangulate": cmds.checkBox(self.triangulate_cb, query=True, value=True)

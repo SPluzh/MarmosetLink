@@ -96,6 +96,7 @@ def export_selection_advanced():
                     raise Exception("Export file is empty: {}".format(export_path))
                     
                 print("Maya Trigger: Export successful: {}".format(export_path))
+                cmds.inViewMessage(amg='<hl>LP Export Successful</hl>: {}'.format(os.path.basename(export_path)), pos='topCenter', fade=True)
                 
                 # 8. Delete Duplicated Object
                 if duplicated_nodes:
@@ -116,18 +117,26 @@ def main():
     Main entry point for LP Export + Bake.
     """
     # Force reload of utils
+    _reload_utils()
+
+    # Use the advanced export function defined above
+    maya_mset_utils.perform_bake_cycle(export_selection_advanced)
+
+def main_export_only():
+    """
+    Export LP without triggering Marmoset Bake.
+    """
+    _reload_utils()
+    export_selection_advanced()
+
+def _reload_utils():
     import importlib
     import sys
-    
-    # Check if we can find the exact module name to reload it properly
     utils_name = maya_mset_utils.__name__
     if utils_name in sys.modules:
         importlib.reload(sys.modules[utils_name])
     else:
         importlib.reload(maya_mset_utils)
-
-    # Use the advanced export function defined above
-    maya_mset_utils.perform_bake_cycle(export_selection_advanced)
 
 if __name__ == "__main__":
     main()
