@@ -1,17 +1,18 @@
 global proc installMarmosetShelf() {
     global string $gShelfTopLevel;
+    string $shelfName = "Marmoset";
     
-    // Get the currently active shelf tab
-    string $currentShelf = `tabLayout -query -selectTab $gShelfTopLevel`;
-    
-    if ($currentShelf == "") {
-        error "Could not determine the current shelf.";
-        return;
+    // Check if shelf exists and delete it for a clean install
+    if (`shelfLayout -exists $shelfName`) {
+        deleteUI $shelfName;
     }
-
+    
+    // Create new shelf
+    shelfLayout -parent $gShelfTopLevel $shelfName;
+    
     // --- Button 1: Export HP ---
     shelfButton
-        -parent $currentShelf
+        -parent $shelfName
         -label "HP"
         -annotation "Export HP & Bake"
         -image "pythonFamily.png" 
@@ -24,7 +25,7 @@ global proc installMarmosetShelf() {
 
     // --- Button 2: Export LP ---
     shelfButton
-        -parent $currentShelf
+        -parent $shelfName
         -label "LP"
         -annotation "Export LP (Triangulated) & Bake"
         -image "pythonFamily.png"
@@ -37,7 +38,7 @@ global proc installMarmosetShelf() {
 
     // --- Button 3: Bake Only ---
     shelfButton
-        -parent $currentShelf
+        -parent $shelfName
         -label "Bake"
         -annotation "Re-Bake Only"
         -image "pythonFamily.png"
@@ -48,7 +49,20 @@ global proc installMarmosetShelf() {
         -menuItem "Settings" "python(\"import importlib; import maya_mset_integration.maya_mset_settings_gui as gui; importlib.reload(gui); gui.main()\")"
     ;
     
-    print("Marmoset buttons added to shelf: " + $currentShelf + "\n");
+    // Set active tab to the new shelf
+    int $index = 0;
+    string $shelves[] = `tabLayout -query -childArray $gShelfTopLevel`;
+    for ($i=0; $i<size($shelves); $i++) {
+        if ($shelves[$i] == $shelfName) {
+            $index = $i + 1;
+            break;
+        }
+    }
+    if ($index > 0) {
+        tabLayout -edit -selectTabIndex $index $gShelfTopLevel;
+    }
+
+    print("Marmoset shelf created and selected.\n");
 }
 
 installMarmosetShelf();
